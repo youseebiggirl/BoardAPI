@@ -117,7 +117,9 @@ public class BoardAPI extends BukkitRunnable implements Listener {
 
     public void run() {
         Bukkit.getOnlinePlayers().forEach(player -> boardsCache.forEach(board -> {
-            if (player.getLocation().distance(board.getLocation()) > 60 && board.getRecipients().contains(player))
+            if (!player.getLocation().getWorld().getName().equals(board.getLocation().getWorld().getName()))
+                board.destroy(player);
+            else if (player.getLocation().distance(board.getLocation()) > 60 && board.getRecipients().contains(player))
                 board.destroy(player);
             else if (!board.getRecipients().contains(player) && board.canReceive(player))
                 board.spawn(player);

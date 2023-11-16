@@ -79,7 +79,10 @@ public class BoardAPI extends BukkitRunnable implements Listener {
         for (BannerBoard board: boardsCache) {
             if (!player.getWorld().getName().equals(board.getLocation().getWorld().getName())) {
                 board.destroy(player);
-            } else board.spawn(player);
+            } else {
+                board.spawn(player);
+                board.updateFragments();
+            }
         }
     }
 

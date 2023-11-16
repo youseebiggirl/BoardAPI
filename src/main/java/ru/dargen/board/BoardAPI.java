@@ -75,7 +75,12 @@ public class BoardAPI extends BukkitRunnable implements Listener {
 
     @EventHandler(priority = LOWEST)
     void worldChange(PlayerChangedWorldEvent e) {
-        boardsCache.forEach(board -> board.destroy(e.getPlayer()));
+        Player player = e.getPlayer();
+        for (BannerBoard board: boardsCache) {
+            if (!player.getWorld().getName().equals(board.getLocation().getWorld().getName())) {
+                board.destroy(player);
+            } else board.spawn(player);
+        }
     }
 
     @EventHandler(priority = LOWEST)
@@ -121,6 +126,8 @@ public class BoardAPI extends BukkitRunnable implements Listener {
                 board.destroy(player);
             else if (player.getLocation().distance(board.getLocation()) > 60 && board.getRecipients().contains(player))
                 board.destroy(player);
+            else if (player.getLocation().distance(board.getLocation()) < 60 && board.getRecipients().contains(player))
+                board.spawn(player);
             else if (!board.getRecipients().contains(player) && board.canReceive(player))
                 board.spawn(player);
         }));

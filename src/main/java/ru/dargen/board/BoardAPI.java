@@ -9,6 +9,7 @@ import net.minecraft.server.v1_12_R1.PacketListenerPlayIn;
 import net.minecraft.server.v1_12_R1.PacketPlayInUseEntity;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -97,8 +98,15 @@ public class BoardAPI extends BukkitRunnable implements Listener {
 
     @EventHandler(priority = LOWEST)
     public void respawn(PlayerRespawnEvent e) {
+        Player player = e.getPlayer();
+        World respawnWorld = e.getRespawnLocation().getWorld();
         Bukkit.getScheduler().runTaskLaterAsynchronously(BoardAPI.api.getPlugin(), () -> {
             boardsCache.forEach(board -> board.destroy(e.getPlayer()));
+            for (BannerBoard board: boardsCache) {
+                if (respawnWorld.getName().equals(board.getLocation().getWorld().getName())) {
+                    board.update(player);
+                }
+            }
         }, 2);
     }
 

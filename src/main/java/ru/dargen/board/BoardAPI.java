@@ -98,16 +98,17 @@ public class BoardAPI extends BukkitRunnable implements Listener {
 
     @EventHandler(priority = LOWEST)
     public void respawn(PlayerRespawnEvent e) {
-        Player player = e.getPlayer();
-        World respawnWorld = e.getRespawnLocation().getWorld();
         Bukkit.getScheduler().runTaskLaterAsynchronously(BoardAPI.api.getPlugin(), () -> {
+            Player player = e.getPlayer();
             boardsCache.forEach(board -> board.destroy(e.getPlayer()));
             for (BannerBoard board: boardsCache) {
-                if (respawnWorld.getName().equals(board.getLocation().getWorld().getName())) {
+                if (!player.getWorld().getName().equals(board.getLocation().getWorld().getName())) {
+                    board.destroy(player);
+                } else {
                     board.update(player);
                 }
             }
-        }, 2);
+        }, 5);
     }
 
     @EventHandler(priority = LOWEST)
